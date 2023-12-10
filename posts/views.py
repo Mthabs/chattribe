@@ -14,3 +14,12 @@ class PostListView(generics.ListCreateAPIView):
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)   
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_update(self, serializer):
+        # Associate the post update with the current user
+        serializer.save(user=self.request.user)
