@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-y*do)cgn8qs7#9z5a*v3o++ek-$l_ka#1@mkg7s%eso_y29l-z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['8000-mthabs-chattribe-2fl4wjd4a4f.ws-eu106.gitpod.io']
+ALLOWED_HOSTS = ['8000-mthabs-chattribe-db0oj6j07qr.ws-eu106.gitpod.io']
 
 
 # Application definition
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'profiles',
+    'posts',
 ]
 
 MIDDLEWARE = [
