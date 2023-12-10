@@ -4,6 +4,7 @@ from .models import UserProfile
 from .serializers import UserProfileSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from chat_tribe.permissions import IsProfileOwnerOrReadOnly
 
 class ProfileList(generics.ListAPIView):
     queryset = UserProfile.objects.all()
@@ -12,6 +13,7 @@ class ProfileList(generics.ListAPIView):
 class ProfileDetail(generics.RetrieveUpdateAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
+    permission_classes = [IsProfileOwnerOrReadOnly]
 
     def retrieve(self, request, *args, **kwargs):
         profile = get_object_or_404(UserProfile, pk=kwargs['pk'])
