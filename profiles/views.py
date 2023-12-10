@@ -17,12 +17,12 @@ class ProfileDetail(generics.RetrieveUpdateAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         profile = get_object_or_404(UserProfile, pk=kwargs['pk'])
-        serializer = self.get_serializer(profile)
+        serializer = self.get_serializer(profile, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
         profile = self.get_object()
-        serializer = self.get_serializer(profile, data=request.data)
+        serializer = self.get_serializer(profile, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
