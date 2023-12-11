@@ -1,3 +1,4 @@
+from django.http import Http404
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -38,7 +39,8 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     def perform_update(self, serializer):
         # Associate the post update with the current user
         serializer.save(user=self.request.user)
-    
+
+
     def destroy(self, request, *args, **kwargs):
         post = self.get_object()
         self.check_object_permissions(request, post)  

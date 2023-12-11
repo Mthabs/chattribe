@@ -1,5 +1,6 @@
-from rest_framework import serializers
 from .models import Post
+from rest_framework import serializers
+
 
 class PostSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
