@@ -9,7 +9,7 @@ class CommentSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
 
     class Meta:
-        model = Post
+        model = Comment
         fields = ['id', 'profile_id', 'user', 'post', 'content', 'created_at', 'updated_at', 'profile_picture', 'is_owner']
 
     def to_representation(self, instance):
