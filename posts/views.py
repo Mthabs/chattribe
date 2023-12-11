@@ -4,12 +4,12 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import Post
 from .serializers import PostSerializer
-from chat_tribe.permissions import IsPostOwnerOrReadOnly
+from chat_tribe.permissions import IsOwnerOrReadOnly
 
 class PostListView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticated, IsPostOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -21,7 +21,7 @@ class PostListView(generics.ListCreateAPIView):
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticated, IsPostOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
     def get_serializer_context(self):
         context = super().get_serializer_context()

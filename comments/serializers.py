@@ -24,3 +24,10 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_is_owner(self, obj):
         request = self.context.get('request')
         return request.user == obj.user
+
+class CommentDetailSerializer(CommentSerializer):
+    post = serializers.ReadOnlyField(source='post.id')
+
+    class Meta:
+        model = Comment
+        fields = CommentSerializer.Meta.fields + ['post']
