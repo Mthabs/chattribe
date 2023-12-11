@@ -8,19 +8,27 @@ from chat_tribe.permissions import IsPostOwnerOrReadOnly
 class PostListView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated, IsPostOwnerOrReadOnly]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)   
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated, IsPostOwnerOrReadOnly]
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['is_owner'] = (
+            self.request.user.is_authenticated and
+            self.get_object().user == self.request.user
+        )
+        return context
 
     def retrieve(self, request, *args, **kwargs):
         post = get_object_or_404(self.queryset, pk=kwargs['pk'])
