@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from rest_framework import serializers
 from .models import Like
 
@@ -11,6 +12,10 @@ class LikeSerializer(serializers.ModelSerializer):
         # Ensure that a user can only like a post once
         post = data['post']
         user = data['user']
-        if Like.objects.filter(post=post, user=user).exists():
+        try:
+            with transaction.atomic():
+                Like.objects.create(post=post, user=user)
+        except IntegrityError:
             raise serializers.ValidationError("You have already liked this post.")
+            
         return data
