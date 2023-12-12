@@ -1,7 +1,7 @@
-from django.db import IntegrityError, transaction
-from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from django.db import IntegrityError, transaction
 from .models import Like
 from .serializers import LikeSerializer
 from chat_tribe.permissions import IsOwnerOrReadOnly
@@ -13,15 +13,17 @@ class LikeListView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        
+
         try:
+            serializer.is_valid(raise_exception=True)
             with transaction.atomic():
-                serializer.is_valid(raise_exception=True)
                 serializer.save(user=request.user)
-        except IntegrityError:
-            return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except IntegrityError as e:
+            error_message = {"error": [f"IntegrityError: {str(e)}"]}
+            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class LikeDetailView(generics.RetrieveDestroyAPIView):
     queryset = Like.objects.all()

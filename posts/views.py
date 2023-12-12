@@ -37,7 +37,6 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def perform_update(self, serializer):
-        # Associate the post update with the current user
         serializer.save(user=self.request.user)
 
 

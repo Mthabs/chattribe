@@ -37,7 +37,6 @@ class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def perform_update(self, serializer):
-        # Associate the comment update with the current user
         serializer.save(user=self.request.user)
 
     def destroy(self, request, *args, **kwargs):
