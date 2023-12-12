@@ -1,8 +1,10 @@
-from rest_framework import generics, permissions
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import generics, permissions, serializers
+from django.db import IntegrityError
 from .models import Friend
 from .serializers import FriendSerializer
+from django.contrib.auth.models import User
+from rest_framework.response import Response
+from rest_framework import status
 
 class FriendListCreateView(generics.ListCreateAPIView):
     queryset = Friend.objects.all()
@@ -10,7 +12,11 @@ class FriendListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        user = self.request.user
+        friend = serializer.validated_data['friend']
+        if Friend.objects.filter(user=user, friend=friend).exists():
+            raise serializers.ValidationError({'error': 'Friendship already exists.'})
+        serializer.save(user=user)
 
 class FriendDetailView(generics.RetrieveDestroyAPIView):
     queryset = Friend.objects.all()
