@@ -17,7 +17,14 @@ class UserProfile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     content = models.TextField(blank=True)
-
+    friends = models.ManyToManyField('self', blank=True)
+    following_id = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='followers'
+    )
     class Meta:
         verbose_name = "User Profile"
         verbose_name_plural = "User Profiles"

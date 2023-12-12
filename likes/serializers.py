@@ -10,9 +10,8 @@ class LikeSerializer(serializers.ModelSerializer):
         fields = ['id', 'post', 'user', 'created_at']
 
     def validate(self, data):
-        # Ensure that a user can only like a post once
         post = data['post']
-        user = self.context['request'].user  # Access the current user from the context
+        user = self.context['request'].user  
 
         try:
             with transaction.atomic():
