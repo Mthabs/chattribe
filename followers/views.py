@@ -2,6 +2,7 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.db.models import Q
+from chat_tribe.permissions import IsOwnerOrReadOnly  
 from .models import Follower
 from .serializers import FollowerSerializer
 
@@ -22,14 +23,8 @@ class FollowerCreateView(generics.CreateAPIView):
 
 class FollowerDetailView(generics.RetrieveDestroyAPIView):
     serializer_class = FollowerSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]  
 
     def get_queryset(self):
         user = self.request.user
         return Follower.objects.filter(Q(user=user) | Q(following_user=user))
-
-    def perform_destroy(self, instance):
-        if instance.user == self.request.user:
-            instance.delete()
-        else:
-            self.permission_denied(self.request)
