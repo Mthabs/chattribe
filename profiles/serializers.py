@@ -9,7 +9,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     friends = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     class Meta:
         model = UserProfile
-        fields = ['user_id', 'user', 'created_at', 'updated_at', 'bio', 'content', 'profile_picture', 'cover_photo', 'is_owner']
+        fields = ['user_id', 'user', 'created_at', 'updated_at', 'bio', 'content', 'profile_picture', 'cover_photo', 'is_owner', 'friends', 'following_id']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

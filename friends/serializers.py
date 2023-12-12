@@ -1,3 +1,6 @@
+from rest_framework import serializers
+from .models import Friend
+
 class FriendSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     friend_name = serializers.ReadOnlyField(source='friend.username')
