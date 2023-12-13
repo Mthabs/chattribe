@@ -3,14 +3,14 @@ from rest_framework import serializers
 
 
 class PostSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user.username')
+    owner = serializers.ReadOnlyField(source='owner.username')
     profile_id = serializers.ReadOnlyField(source='user.userprofile.id')
     profile_picture = serializers.ReadOnlyField(source='user.userprofile.profile_picture_url')
     is_owner = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['id', 'profile_id', 'user', 'header', 'content', 'created_at', 'updated_at','profile_picture', 'post_picture', 'is_owner', 'image_filter']
+        fields = ['id', 'profile_id', 'owner', 'header', 'content', 'created_at', 'updated_at','profile_picture', 'post_picture', 'is_owner', 'image_filter']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -38,4 +38,4 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_is_owner(self, obj):
         request = self.context.get('request')
-        return request.user == obj.user
+        return request.user == obj.owner

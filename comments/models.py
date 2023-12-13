@@ -4,7 +4,7 @@ from posts.models import Post
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -13,6 +13,6 @@ class Comment(models.Model):
         ordering = ['created_at']
 
     def __str__(self):
-        return  self.content 
+        return  f'{self.content}' 
 
 

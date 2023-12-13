@@ -15,7 +15,7 @@ class Post(models.Model):
         ('sharpen', 'Sharpen'),
     ]
     header = models.CharField(max_length=255, blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     post_picture = models.ImageField(upload_to='post_images/', null=True, blank=True)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -33,5 +33,5 @@ class Post(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"Post by {self.id} at {self.created_at}"
+        return f"Post by {self.id} at {self.header}"
 

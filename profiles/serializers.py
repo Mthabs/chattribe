@@ -1,21 +1,26 @@
 from rest_framework import serializers
 from .models import UserProfile
+from followers.models import Follower
+from friends.models import Friend
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    user_id = serializers.ReadOnlyField(source='id')
-    user = serializers.ReadOnlyField(source='user.username')
+    owner = serializers.ReadOnlyField(source='owner.username')
     is_owner = serializers.SerializerMethodField()
-    following_id = serializers.PrimaryKeyRelatedField(read_only=True, source='following.id')
-    friends = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    following_id = serializers.SerializerMethodField()
+    posts = serializers.ReadOnlyField()
+    followers = serializers.ReadOnlyField()
+    following = serializers.ReadOnlyField()
+    friends = serializers.ReadOnlyField()
+
     class Meta:
         model = UserProfile
-        fields = ['user_id', 'user', 'created_at', 'updated_at', 'bio', 'content', 'profile_picture', 'cover_photo', 'is_owner', 'friends', 'following_id']
+        fields = ['id', 'owner', 'created_at', 'updated_at', 'bio', 'content', 'profile_picture', 'cover_photo', 'is_owner', 'following_id', 'posts','friends','followers','following']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         default_profile_picture_url = 'https://res.cloudinary.com/dnt7oro5y/image/upload/v1702078965/default_profile_yansvo.jpg'
         default_cover_photo_url = 'https://res.cloudinary.com/dnt7oro5y/image/upload/v1702078965/default_profile_ifketo.jpg'
-            
+
         if not instance.profile_picture:
             representation['profile_picture'] = default_profile_picture_url
 
@@ -24,7 +29,30 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
         return representation
 
-    # Add the get_is_owner method to check if the user is the owner
     def get_is_owner(self, obj):
         request = self.context.get('request')
         return request.user == obj.user
+
+    def get_following_id(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            following = Follower.objects.filter(
+                owner=user, followed=obj.owner
+            ).first()
+            return following.id if following else None
+        return None
+
+   # def get_friends(self, obj):
+   #     request = self.context.get('request')
+    #    if request.user.is_authenticated:
+     #       friendships = Friend.objects.filter(user=request.user, friend=obj.user).first()
+      #      return FriendSerializer(friendships).data if friendships else None
+       # return None
+        
+
+   # def get_followers(self, obj):
+    #    request = self.context.get('request')
+     #   if request and request.user.is_authenticated:
+      #      following = Follower.objects.filter(user=request.user, followed=obj.user).first()
+       #     return FollowerSerializer(following).data if following else None
+      #  return None

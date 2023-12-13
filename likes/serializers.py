@@ -3,20 +3,14 @@ from django.db import IntegrityError, transaction
 from .models import Like
 
 class LikeSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user.username')
+    owner = serializers.ReadOnlyField(source='owner.username')
 
     class Meta:
         model = Like
-        fields = ['id', 'post', 'user', 'created_at']
+        fields = ['id', 'post', 'owner', 'created_at']
 
-    def validate(self, data):
-        post = data['post']
-        user = self.context['request'].user  
-
+    def create(self, validated_data):
         try:
-            with transaction.atomic():
-                Like.objects.create(post=post, user=user)
+            return super().create(validated_data)
         except IntegrityError:
-            raise serializers.ValidationError("You have already liked this post.")
-
-        return data
+            raise serializers.ValidationError({"error" : "You have already liked this post."})
